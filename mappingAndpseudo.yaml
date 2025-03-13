@@ -1,0 +1,21 @@
+Mappings:
+  AmiRegionMap:
+    us-east-1:
+      AMI: ami-0182f373e66f89c85
+    us-east-2:
+      AMI: ami-09efc42336106d2f2
+    us-west-1:
+      AMI: ami-025258b26b492aec6
+
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: !FindInMap
+        - AmiRegionMap
+        - !Ref AWS::Region
+        - AMI
+      SubnetId: subnet-05340ca06a7ddce22
+      SecurityGroupIds:
+        - sg-040bfe9e5ca3d5286

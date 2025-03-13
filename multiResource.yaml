@@ -1,0 +1,28 @@
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-0182f373e66f89c85
+      SubnetId: subnet-05340ca06a7ddce22
+      SecurityGroupIds:
+        - sg-040bfe9e5ca3d5286
+      Tags:
+        - Key: "Name"
+          Value: !Join ["-", [my, inst, from, cloudformation]]
+      SecurityGroups:
+        - !Ref TestSG
+
+  TestSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow ssh & http to client host
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0

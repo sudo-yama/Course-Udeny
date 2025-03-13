@@ -1,0 +1,77 @@
+Parameters:
+  NameOfService:
+    Description: "The Name of the service this stack is to be used for."
+    Type: String
+  InstanceTypeParameter:
+    Description: Enter t2.micro, t2.small, or t2.medium. Default is t2.micro.
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t2.small
+      - t2.medium
+      - m1.small
+      - m1.large
+  KeyName:
+    Description: Name of EC2 login key
+    Type: AWS::EC2::KeyPair::KeyName
+
+Mappings:
+  AmiRegionMap:
+    us-east-1:
+      AMI: ami-0182f373e66f89c85
+    us-east-2:
+      AMI: ami-09efc42336106d2f2
+    us-west-1:
+      AMI: ami-025258b26b492aec6
+
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Metadata:
+      AWS::CloudFormation::Init:
+        config:
+          packages:
+            yum:
+              php: []
+              httpd: []
+              wget: []
+              unzip: []
+              git: []
+
+          commands:
+            files:
+              /var/www/html/hello.html:
+                content: !Sub |
+                  <!DICTYPE html>
+                  <html>
+                  <body>
+
+                  <h1>Welcome to Cloud Formation.</h1>
+                  <p>This site is deploy by Cloud formation.</p>
+                  </body>
+                  </html>
+          service:
+              sysvinit:
+                httpd:
+                  enabled: true
+                  ensureRunning: true
+    Properties:
+      InstanceType: !Ref InstanceTypeParameter
+      KeyName: !Ref KeyName
+      ImageId: !FindInMap
+        - AmiRegionMap
+        - !Ref AWS::Region
+        - AMI
+      SubnetId: subnet-05340ca06a7ddce22
+      SecurityGroupIds:
+        - sg-040bfe9e5ca3d5286
+      Tags:
+        - Key: Name
+          Value: !Ref NameOfService
+
+Outputs:
+  PrintSomeInfo:
+    Value: !GetAtt
+      - MyInstance
+      - PublicDnsName
