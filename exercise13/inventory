@@ -1,0 +1,30 @@
+all:
+  hosts:
+    web01:
+      ansible_host: 10.0.0.221
+    web02:
+      ansible_host: 10.0.0.235
+    web03:
+      ansible_host: 10.0.0.17
+      ansible_user: ubuntu
+    db01:
+      ansible_host: 10.0.0.67
+
+  children:
+    webservers:
+      hosts:
+        web01:
+        web02:
+        web03:
+    dbservers:
+      hosts:
+        db01:
+    dc_oregon:
+      children:
+        webservers:
+        dbservers:
+      vars:
+        ansible_user: ec2-user
+        ansible_ssh_private_key_file: cilent-key.pem
+
+
